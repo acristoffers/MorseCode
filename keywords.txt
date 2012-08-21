@@ -1,0 +1,10 @@
+#######################################
+# Syntax Coloring Map For RingtonePlayer
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+MorseCode	KEYWORD2
+transmit	KEYWORD2
