@@ -1,4 +1,4 @@
-#include <Arduino.h>
+﻿#include <Arduino.h>
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -91,237 +91,287 @@
 #define NOTE_DS8 4978
 
 #ifdef DEBUG
-#define debug(x) Serial.println(String() + x);
-#define debug_inline(x) Serial.print(String() + x);
+ #define debug(x)        Serial.println(String() + x);
+ #define debug_inline(x) Serial.print(String() + x);
 #else
-#define debug(x)
-#define debug_inline(x)
+ #define debug(x)
+ #define debug_inline(x)
 #endif
 
-namespace MorseCode {
-    
-    void digital_dot(int pin, int duration) {
+namespace MorseCode
+{
+    void digital_dot(int pin, int duration)
+    {
         digitalWrite(pin, HIGH);
-        delay( 1 * duration );
+        delay(1 * duration);
         digitalWrite(pin, LOW);
     }
 
-    void digital_dash(int pin, int duration){
+    void digital_dash(int pin, int duration)
+    {
         digitalWrite(pin, HIGH);
-        delay( 3 * duration );
+        delay(3 * duration);
         digitalWrite(pin, LOW);
     }
 
-    void analog_dot(int pin, int duration, int frequency) {
-        tone( pin, frequency, duration);
-        delay( duration );
+    void analog_dot(int pin, int duration, int frequency)
+    {
+        tone(pin, frequency, duration);
+        delay(duration);
     }
 
-    void analog_dash(int pin, int duration, int frequency) {
+    void analog_dash(int pin, int duration, int frequency)
+    {
         duration *= 3;
-        tone( pin, frequency, duration);
-        delay( duration );
+        tone(pin, frequency, duration);
+        delay(duration);
     }
 
     // inter-element gap
-    void gap(int duration){
-        delay( 1 * duration );
+    void gap(int duration)
+    {
+        delay(1 * duration);
     }
 
     // don't ask why short. It's 3 durations long # between letters
-    void short_gap(int duration){
-        delay( 3 * duration );
+    void short_gap(int duration)
+    {
+        delay(3 * duration);
     }
 
     // between words
-    void medium_gap(int duration){
-        delay( 7 * duration );
+    void medium_gap(int duration)
+    {
+        delay(7 * duration);
     }
-    
-    void play(int pin, int wpm, int frequency, char* c) {
-        debug( c )
-        while( *c ) {
-            if( frequency == 0 ) {
-                switch(*c) {
+
+    void play(int pin, int wpm, int frequency, char *c)
+    {
+        debug(c)
+        while ( *c ) {
+            if ( frequency == 0 ) {
+                switch ( *c ) {
                     case '.':
-                        digital_dot( pin, wpm );
-                        gap( wpm );
+                        digital_dot(pin, wpm);
+                        gap(wpm);
                         break;
+
                     case '-':
-                        digital_dash( pin, wpm );
-                        gap( wpm );
+                        digital_dash(pin, wpm);
+                        gap(wpm);
                         break;
                 }
             } else {
-                switch(*c) {
+                switch ( *c ) {
                     case '.':
-                        analog_dot( pin, wpm, frequency );
-                        gap( wpm );
+                        analog_dot(pin, wpm, frequency);
+                        gap(wpm);
                         break;
+
                     case '-':
-                        analog_dash( pin, wpm, frequency );
-                        gap( wpm );
+                        analog_dash(pin, wpm, frequency);
+                        gap(wpm);
                         break;
                 }
             }
             c++;
         }
-        short_gap( wpm );
+        short_gap(wpm);
     }
-    
+
     // pin to use, text to transmit, words per minute, frequency ( in case of using a buzzer )
-    void transmit(int pin, char* s, int wpm, int frequency = 0) {
-        if (wpm < 1) wpm = 8;
-        
+    void transmit(int pin, char *s, int wpm, int frequency = 0)
+    {
+        if ( wpm < 1 ) {
+            wpm = 8;
+        }
+
         // The word PARIS is standard for defining code speed
         // It has 50 elements
         // so it is 1 minute divided by wpm*words, wich will be dot speed
-        wpm = ( 60 * 1000L ) / (50 * wpm );
-        
-        if ( frequency == 0 ) pinMode( pin, OUTPUT );
-        
-        while( *s ) {
-            switch( *s ) {
+        wpm = (60 * 1000L) / (50 * wpm);
+
+        if ( frequency == 0 ) {
+            pinMode(pin, OUTPUT);
+        }
+
+        while ( *s ) {
+            switch ( *s ) {
                 case 'a':
                 case 'A':
                     play(pin, wpm, frequency, ".-");
                     break;
+
                 case 'b':
                 case 'B':
                     play(pin, wpm, frequency, "-...");
                     break;
+
                 case 'c':
                 case 'C':
                     play(pin, wpm, frequency, "-.-.");
                     break;
+
                 case 'd':
                 case 'D':
                     play(pin, wpm, frequency, "-..");
                     break;
+
                 case 'e':
                 case 'E':
                     play(pin, wpm, frequency, ".");
                     break;
+
                 case 'f':
                 case 'F':
                     play(pin, wpm, frequency, "..--.");
                     break;
+
                 case 'g':
                 case 'G':
                     play(pin, wpm, frequency, "--.");
                     break;
+
                 case 'h':
                 case 'H':
                     play(pin, wpm, frequency, "....");
                     break;
+
                 case 'i':
                 case 'I':
                     play(pin, wpm, frequency, "..");
                     break;
+
                 case 'j':
                 case 'J':
                     play(pin, wpm, frequency, ".---");
                     break;
+
                 case 'k':
                 case 'K':
                     play(pin, wpm, frequency, "-.-");
                     break;
+
                 case 'l':
                 case 'L':
                     play(pin, wpm, frequency, ".-..");
                     break;
+
                 case 'm':
                 case 'M':
                     play(pin, wpm, frequency, "--");
                     break;
+
                 case 'n':
                 case 'N':
                     play(pin, wpm, frequency, "-.");
                     break;
+
                 case 'o':
                 case 'O':
                     play(pin, wpm, frequency, "---");
                     break;
+
                 case 'p':
                 case 'P':
                     play(pin, wpm, frequency, ".--.");
                     break;
+
                 case 'q':
                 case 'Q':
                     play(pin, wpm, frequency, "--.-");
                     break;
+
                 case 'r':
                 case 'R':
                     play(pin, wpm, frequency, ".-.");
                     break;
+
                 case 's':
                 case 'S':
                     play(pin, wpm, frequency, "...");
                     break;
+
                 case 't':
                 case 'T':
                     play(pin, wpm, frequency, "-");
                     break;
+
                 case 'u':
                 case 'U':
                     play(pin, wpm, frequency, "..-");
                     break;
+
                 case 'v':
                 case 'V':
                     play(pin, wpm, frequency, "...-");
                     break;
+
                 case 'w':
                 case 'W':
                     play(pin, wpm, frequency, ".--");
                     break;
+
                 case 'x':
                 case 'X':
                     play(pin, wpm, frequency, "-..-");
                     break;
+
                 case 'y':
                 case 'Y':
                     play(pin, wpm, frequency, "-.--");
                     break;
+
                 case 'z':
                 case 'Z':
                     play(pin, wpm, frequency, "--..");
                     break;
+
                 case '0':
                     play(pin, wpm, frequency, "-----");
                     break;
+
                 case '1':
                     play(pin, wpm, frequency, ".----");
                     break;
+
                 case '2':
                     play(pin, wpm, frequency, "..---");
                     break;
+
                 case '3':
                     play(pin, wpm, frequency, "...--");
                     break;
+
                 case '4':
                     play(pin, wpm, frequency, "....-");
                     break;
+
                 case '5':
                     play(pin, wpm, frequency, ".....");
                     break;
+
                 case '6':
                     play(pin, wpm, frequency, "-....");
                     break;
+
                 case '7':
                     play(pin, wpm, frequency, "--...");
                     break;
+
                 case '8':
                     play(pin, wpm, frequency, "---..");
                     break;
+
                 case '9':
                     play(pin, wpm, frequency, "----.");
                     break;
+
                 default:
-                    medium_gap( wpm );
+                    medium_gap(wpm);
             }
 
             s++;
         }
     }
-    
 }
